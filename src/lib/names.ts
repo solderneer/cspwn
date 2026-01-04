@@ -3,15 +3,52 @@ import { join } from "path";
 
 // Short, memorable names for Claude agents
 const AGENT_NAMES = [
-  "alice", "betty", "clara", "diana", "emma",
-  "felix", "grace", "henry", "iris", "james",
-  "kate", "leo", "maya", "noah", "olive",
-  "pearl", "quinn", "ruby", "sam", "tara",
-  "uma", "vera", "wade", "xena", "yuki", "zara",
-  "amber", "blake", "casey", "drew", "eden",
-  "finn", "gwen", "hank", "ivy", "jade",
-  "kira", "liam", "milo", "nora", "owen",
-  "piper", "rex", "sage", "theo", "wren",
+  "alice",
+  "betty",
+  "clara",
+  "diana",
+  "emma",
+  "felix",
+  "grace",
+  "henry",
+  "iris",
+  "james",
+  "kate",
+  "leo",
+  "maya",
+  "noah",
+  "olive",
+  "pearl",
+  "quinn",
+  "ruby",
+  "sam",
+  "tara",
+  "uma",
+  "vera",
+  "wade",
+  "xena",
+  "yuki",
+  "zara",
+  "amber",
+  "blake",
+  "casey",
+  "drew",
+  "eden",
+  "finn",
+  "gwen",
+  "hank",
+  "ivy",
+  "jade",
+  "kira",
+  "liam",
+  "milo",
+  "nora",
+  "owen",
+  "piper",
+  "rex",
+  "sage",
+  "theo",
+  "wren",
 ];
 
 /**
@@ -26,10 +63,7 @@ export function getExistingAgents(claudeDir: string): string[] {
     .filter((name) => {
       const agentPath = join(claudeDir, name);
       // Must be a directory and have a .git folder (valid repo)
-      return (
-        statSync(agentPath).isDirectory() &&
-        existsSync(join(agentPath, ".git"))
-      );
+      return statSync(agentPath).isDirectory() && existsSync(join(agentPath, ".git"));
     })
     .filter((name) => AGENT_NAMES.includes(name)); // Only count known agent names
 }

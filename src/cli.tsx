@@ -57,10 +57,4 @@ const cli = meow(
 
 const [command = "spawn", ...args] = cli.input;
 
-render(
-  <App
-    command={command}
-    args={args}
-    flags={cli.flags}
-  />
-);
+render(<App command={command} args={args} flags={cli.flags} />);

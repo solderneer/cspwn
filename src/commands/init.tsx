@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, Text, useApp } from "ink";
-import { TextInput, ConfirmInput, Spinner } from "@inkjs/ui";
+import { ConfirmInput, Spinner } from "@inkjs/ui";
 import { existsSync, writeFileSync } from "fs";
 import { join } from "path";
 import { getGitRoot, isGitRepo } from "../lib/git.js";
@@ -92,12 +92,8 @@ export function InitCommand() {
           </Text>
         </Box>
 
-        {analysis.buildCommand && (
-          <Text dimColor>  Build: {analysis.buildCommand}</Text>
-        )}
-        {analysis.testCommand && (
-          <Text dimColor>  Test: {analysis.testCommand}</Text>
-        )}
+        {analysis.buildCommand && <Text dimColor> Build: {analysis.buildCommand}</Text>}
+        {analysis.testCommand && <Text dimColor> Test: {analysis.testCommand}</Text>}
 
         <Box marginTop={1}>
           <Text>Generate CLAUDE.md? </Text>

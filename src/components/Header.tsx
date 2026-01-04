@@ -9,9 +9,7 @@ export function Header() {
       <Text color="#D97757" bold>
         claudectl
       </Text>
-      <Text dimColor>
-        Multi-agent Claude orchestration
-      </Text>
+      <Text dimColor>Multi-agent Claude orchestration</Text>
       <Box marginTop={1}>
         <Text color="blue" dimColor>
           v{VERSION}

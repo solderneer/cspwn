@@ -48,9 +48,7 @@ export function AgentProgress({ name, status, isReused, error }: AgentProgressPr
       </Box>
       <Box marginLeft={1}>
         <Text color={STATUS_COLORS[status]}>{STATUS_LABELS[status]}</Text>
-        {isReused && status === "running" && (
-          <Text dimColor> (reused)</Text>
-        )}
+        {isReused && status === "running" && <Text dimColor> (reused)</Text>}
         {error && (
           <Text color="red" dimColor>
             {" "}

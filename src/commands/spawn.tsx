@@ -10,9 +10,16 @@ import {
   launchITermTab,
   type TerminalType,
 } from "../lib/terminal/index.js";
-import { getGitInfo, isGitRepo, cloneRepo, ensureGitignore, resetRepo, isValidGitRepo, GitError } from "../lib/git.js";
+import {
+  getGitInfo,
+  isGitRepo,
+  cloneRepo,
+  ensureGitignore,
+  resetRepo,
+  GitError,
+} from "../lib/git.js";
 import { notifySpawnComplete } from "../lib/notifications.js";
-import { pickAgentNames, isExistingAgent, getExistingAgents } from "../lib/names.js";
+import { pickAgentNames, isExistingAgent } from "../lib/names.js";
 
 export interface SpawnCommandProps {
   count: number;
@@ -59,7 +66,9 @@ export function SpawnCommand({
   const [error, setError] = useState<string | null>(null);
   const [terminalType, setTerminalType] = useState<TerminalType | null>(null);
   const [phase, setPhase] = useState<"init" | "spawning" | "done">("init");
-  const [gitInfo, setGitInfo] = useState<{ remote: string; branch: string; root: string } | null>(null);
+  const [gitInfo, setGitInfo] = useState<{ remote: string; branch: string; root: string } | null>(
+    null
+  );
   const [reusedNames, setReusedNames] = useState<string[]>([]);
 
   // Initialize
@@ -93,7 +102,28 @@ export function SpawnCommand({
         let names: string[];
         if (clean) {
           // For --clean, pick random names (existing will be deleted)
-          const shuffled = ["alice", "betty", "clara", "diana", "emma", "felix", "grace", "henry", "iris", "james", "kate", "leo", "maya", "noah", "olive", "pearl", "quinn", "ruby", "sam", "tara"].sort(() => Math.random() - 0.5);
+          const shuffled = [
+            "alice",
+            "betty",
+            "clara",
+            "diana",
+            "emma",
+            "felix",
+            "grace",
+            "henry",
+            "iris",
+            "james",
+            "kate",
+            "leo",
+            "maya",
+            "noah",
+            "olive",
+            "pearl",
+            "quinn",
+            "ruby",
+            "sam",
+            "tara",
+          ].sort(() => Math.random() - 0.5);
           names = shuffled.slice(0, count);
         } else {
           names = pickAgentNames(count, claudeDir);
@@ -168,9 +198,7 @@ export function SpawnCommand({
 
           // Update to launching
           setAgents((prev) =>
-            prev.map((a, idx) =>
-              idx === i ? { ...a, status: "launching" } : a
-            )
+            prev.map((a, idx) => (idx === i ? { ...a, status: "launching" } : a))
           );
 
           // Launch terminal
@@ -187,11 +215,7 @@ export function SpawnCommand({
           }
 
           // Update to running
-          setAgents((prev) =>
-            prev.map((a, idx) =>
-              idx === i ? { ...a, status: "running" } : a
-            )
-          );
+          setAgents((prev) => prev.map((a, idx) => (idx === i ? { ...a, status: "running" } : a)));
         } catch (err) {
           setAgents((prev) =>
             prev.map((a, idx) =>
@@ -211,6 +235,7 @@ export function SpawnCommand({
     };
 
     spawn();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, gitInfo, terminalType, agents.length, count, notify, clean]);
 
   // Exit when done
@@ -235,13 +260,13 @@ export function SpawnCommand({
         <Text color="yellow">Dry run mode - no actions taken</Text>
         <Box marginTop={1} flexDirection="column">
           <Text>Would spawn {count} agent(s):</Text>
-          <Text dimColor>  Terminal: {getTerminalName(terminalType || "unknown")}</Text>
-          <Text dimColor>  Branch: {gitInfo?.branch || "current"}</Text>
-          <Text dimColor>  Names: {agents.map((a) => a.name).join(", ")}</Text>
+          <Text dimColor> Terminal: {getTerminalName(terminalType || "unknown")}</Text>
+          <Text dimColor> Branch: {gitInfo?.branch || "current"}</Text>
+          <Text dimColor> Names: {agents.map((a) => a.name).join(", ")}</Text>
           {reusedNames.length > 0 && !clean && (
-            <Text dimColor>  Reusing: {reusedNames.join(", ")}</Text>
+            <Text dimColor> Reusing: {reusedNames.join(", ")}</Text>
           )}
-          {clean && <Text dimColor>  Mode: Clean (fresh clones)</Text>}
+          {clean && <Text dimColor> Mode: Clean (fresh clones)</Text>}
         </Box>
       </Box>
     );
@@ -257,7 +282,11 @@ export function SpawnCommand({
 
       <Box marginBottom={1}>
         <Text>
-          Spawning <Text color="#D97757" bold>{count}</Text> Claude agent
+          Spawning{" "}
+          <Text color="#D97757" bold>
+            {count}
+          </Text>{" "}
+          Claude agent
           {count === 1 ? "" : "s"} in{" "}
           <Text color="cyan">{getTerminalName(terminalType || "unknown")}</Text>
         </Text>
