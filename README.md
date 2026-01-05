@@ -1,16 +1,14 @@
 # cspwn
-
-Claude worktree spawner. Spawn multiple Claude Code instances across your codebase in seconds.
-
-<p align="center">
+<p align="left">
   <img src="https://img.shields.io/badge/version-1.0.0-blue" alt="Version">
   <img src="https://img.shields.io/badge/platform-macOS-lightgrey" alt="Platform">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
 </p>
 
-## Why?
 
-When working on complex tasks, multiple Claude agents can divide and conquer - one handles tests, another refactors, a third updates docs. `cspwn` makes spawning these agents trivial.
+**Quickly spawn multiple Claude Code instances within a git repo.**
+After reading through the recent [@bcherny](https://x.com/bcherny/status/2007179832300581177) convos on using Claude Code effectively, I tried running multiple Claude Code instances and realised how tedious it it is to spin up multiple CC instances in their own git trees. So I automated the process, with a couple of quality of life features.
+
 
 ## Features
 
