@@ -79,7 +79,10 @@ export async function ensureBareRepo(remoteUrl: string, repoHash: string): Promi
     }
   } else {
     // Fetch latest changes
-    await execa("git", ["fetch", "--all", "--prune"], { cwd: bareRepoPath });
+    // In bare repos, we need explicit refspec since --bare clone doesn't set up fetch config
+    await execa("git", ["fetch", "origin", "+refs/heads/*:refs/heads/*", "--prune"], {
+      cwd: bareRepoPath,
+    });
   }
 
   return bareRepoPath;
@@ -252,4 +255,45 @@ export async function resetWorktree(
 export async function getExistingAgentNames(repoHash: string): Promise<string[]> {
   const worktrees = await listWorktrees(repoHash);
   return worktrees.map((wt) => wt.name);
+}
+
+/**
+ * Switch an existing worktree to a new branch
+ * Creates the branch from baseBranch if it doesn't exist
+ */
+export async function switchWorktreeBranch(
+  repoHash: string,
+  agentName: string,
+  newBranchName: string,
+  baseBranch: string
+): Promise<void> {
+  const worktreePath = getWorktreePath(repoHash, agentName);
+
+  if (!existsSync(worktreePath)) {
+    throw new WorktreeError(`Worktree does not exist at ${worktreePath}`);
+  }
+
+  // Fetch latest from origin
+  await execa("git", ["fetch", "origin"], { cwd: worktreePath });
+
+  // Check if branch already exists locally
+  let branchExists = false;
+  try {
+    await execa("git", ["rev-parse", "--verify", `refs/heads/${newBranchName}`], {
+      cwd: worktreePath,
+    });
+    branchExists = true;
+  } catch {
+    branchExists = false;
+  }
+
+  if (branchExists) {
+    // Switch to existing branch
+    await execa("git", ["checkout", newBranchName], { cwd: worktreePath });
+  } else {
+    // Create new branch from base and switch to it
+    await execa("git", ["checkout", "-b", newBranchName, `origin/${baseBranch}`], {
+      cwd: worktreePath,
+    });
+  }
 }
