@@ -3,7 +3,7 @@
 Multi-agent Claude orchestration CLI. Spawn multiple Claude Code instances across your codebase in seconds.
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.2.0-blue" alt="Version">
+  <img src="https://img.shields.io/badge/version-1.0.0-blue" alt="Version">
   <img src="https://img.shields.io/badge/platform-macOS-lightgrey" alt="Platform">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
 </p>
@@ -14,25 +14,22 @@ When working on complex tasks, multiple Claude agents can divide and conquer - o
 
 ## Features
 
-- **Instant multi-agent setup** - Clone your repo and launch N Claude instances in parallel
-- **Memorable agent names** - Agents get names like `betty`, `felix`, `grace` instead of numbers
-- **Smart reuse** - Existing agent directories are reset instead of re-cloned (fast!)
+- **Git worktrees** - Agents share a single `.git` directory, saving disk space and spawn time
+- **Auto branch naming** - Agents get branches like `feat/alice-work` or `fix/betty-fix-auth`
+- **Memorable agent names** - Names like `betty`, `felix`, `grace` instead of numbers
+- **Smart reuse** - Existing worktrees are reset instead of recreated (fast!)
 - **Terminal support** - Works with Kitty and iTerm2
-- **CLAUDE.md generator** - Interactive project context setup
-- **macOS notifications** - Get notified when agents are ready
+- **Central storage** - All worktrees live in `~/.claudectl/`, keeping your project clean
 
 ## Installation
 
 ```bash
-# Clone and install locally
+# Clone and install
 git clone https://github.com/solderneer/claudectl.git
 cd claudectl
 npm install
 npm run build
 npm link
-
-# Or run directly
-npx claudectl
 ```
 
 ## Usage
@@ -46,15 +43,15 @@ claudectl spawn
 # Spawn 5 agents
 claudectl spawn 5
 
-# Force a specific terminal
-claudectl spawn --terminal kitty
-claudectl spawn --terminal iterm
+# Spawn with task description (auto-generates branch names)
+claudectl spawn --task "fix auth bug"
+# Creates: fix/alice-fix-auth-bug, fix/betty-fix-auth-bug, ...
 
-# Force fresh clones (delete existing agents)
+# Force fresh worktrees
 claudectl spawn --clean
 
-# Use a specific branch
-claudectl spawn --branch feature/my-feature
+# Use a specific base branch
+claudectl spawn --branch develop
 
 # Preview without executing
 claudectl spawn --dry-run
@@ -74,22 +71,23 @@ Analyzes your project and generates a `CLAUDE.md` file with build commands and p
 claudectl
 Multi-agent Claude orchestration
 
-v0.2.0
+v1.0.0
 
-Reusing existing agents: betty, felix
+Reusing existing worktrees: betty, felix
 Spawning 3 Claude agents in Kitty
 
-[betty]   ✓ Running (reused)
-[felix]   ✓ Running (reused)
-[grace]   ⠋ Cloning repo...
+[betty]   ✓ Running on fix/betty-fix-auth (reused)
+[felix]   ✓ Running on feat/felix-work (reused)
+[grace]   ⠋ Creating worktree...
 ```
 
 ## Options
 
 ```
 -t, --terminal <type>   Force terminal (kitty, iterm)
--b, --branch <name>     Branch to clone (default: current)
--c, --clean             Delete existing agents and clone fresh
+-b, --branch <name>     Base branch for worktrees (default: current)
+-T, --task <desc>       Task description for branch naming
+-c, --clean             Delete existing worktrees and create fresh
 -n, --no-notify         Disable macOS notifications
 --dry-run               Preview without executing
 -v, --version           Show version
@@ -98,14 +96,27 @@ Spawning 3 Claude agents in Kitty
 
 ## How it works
 
-1. Detects your git repository and current branch
-2. Creates a `claude/` directory (auto-added to `.gitignore`)
-3. Picks memorable agent names (prefers reusing existing ones)
-4. For existing agents: resets to target branch (fast!)
-5. For new agents: clones fresh
-6. Opens each in a new terminal tab with Claude Code running
+1. Detects your git repository and remote URL
+2. Creates a bare repo at `~/.claudectl/repos/<hash>/bare/`
+3. For each agent:
+   - Generates a branch name based on agent name and task
+   - Creates a worktree at `~/.claudectl/repos/<hash>/worktrees/<name>/`
+   - If existing: resets to target branch
+   - If new: creates fresh worktree
+4. Opens each in a new terminal tab with Claude Code running
 
-Each agent gets its own isolated working copy, so they can make changes without conflicts.
+### Directory Structure
+
+```
+~/.claudectl/
+└── repos/
+    └── a1b2c3d4/              # Repo hash (from remote URL)
+        ├── bare/              # Shared bare git repo
+        └── worktrees/
+            ├── alice/         # feat/alice-work
+            ├── betty/         # fix/betty-fix-auth
+            └── felix/         # feat/felix-add-tests
+```
 
 ## Requirements
 
@@ -119,7 +130,9 @@ Each agent gets its own isolated working copy, so they can make changes without 
 ```bash
 npm install
 npm run build
-npm run dev    # watch mode
+npm run dev       # Watch mode
+npm run test      # Run tests
+npm run lint      # Lint code
 ```
 
 ## License
