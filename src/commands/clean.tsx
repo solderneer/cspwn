@@ -21,6 +21,7 @@ type CleanPhase = "checking" | "confirming" | "closing-tabs" | "cleaning" | "don
 interface AgentToClean {
   name: string;
   branch: string;
+  path: string;
 }
 
 export function CleanCommand({ force, terminal }: CleanCommandProps) {
@@ -61,6 +62,7 @@ export function CleanCommand({ force, terminal }: CleanCommandProps) {
         const agents: AgentToClean[] = worktrees.map((wt) => ({
           name: wt.name,
           branch: wt.branch,
+          path: wt.path,
         }));
 
         setAgentsToClean(agents);
@@ -105,13 +107,14 @@ export function CleanCommand({ force, terminal }: CleanCommandProps) {
 
     const closeTabs = async () => {
       try {
-        const agentNames = agentsToClean.map((a) => a.name);
         let closed = 0;
 
         if (terminalType === "kitty") {
+          const agentNames = agentsToClean.map((a) => a.name);
           closed = await closeKittyTabs(agentNames);
         } else if (terminalType === "iterm") {
-          closed = await closeITermSessions(agentNames);
+          const worktreePaths = agentsToClean.map((a) => a.path);
+          closed = await closeITermSessions(worktreePaths);
         }
 
         setTabsClosed(closed);

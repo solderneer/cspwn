@@ -7,13 +7,14 @@ export interface LaunchOptions {
 }
 
 export async function launchITermTab(options: LaunchOptions): Promise<void> {
+  // Set tab title using escape sequence before running command
+  // Also export CLAUDECTL_AGENT env var for identification
   const script = `
     tell application "iTerm2"
       tell current window
         create tab with default profile
         tell current session
-          write text "cd '${options.cwd}' && ${options.command}"
-          set name to "Claude [${options.name}]"
+          write text "export CLAUDECTL_AGENT='${options.name}'; cd '${options.cwd}' && ${options.command}"
         end tell
       end tell
     end tell
@@ -35,33 +36,42 @@ export async function isITermAvailable(): Promise<boolean> {
 }
 
 /**
- * Close iTerm2 sessions matching Claude agent names
+ * Close iTerm2 sessions/tabs by matching worktree paths
+ * Sends Ctrl+C to interrupt Claude Code, then "exit" to close shell
+ * @param worktreePaths - List of worktree directory paths to match
  */
-export async function closeITermSessions(agentNames: string[]): Promise<number> {
-  let closed = 0;
+export async function closeITermSessions(worktreePaths: string[]): Promise<number> {
+  if (worktreePaths.length === 0) return 0;
 
-  for (const name of agentNames) {
-    const script = `
-      tell application "iTerm2"
-        repeat with aWindow in windows
-          repeat with aTab in tabs of aWindow
-            repeat with aSession in sessions of aTab
-              if name of aSession is "Claude [${name}]" then
-                close aSession
-              end if
-            end repeat
-          end repeat
-        end repeat
-      end tell
-    `;
+  // Build path check conditions
+  const pathChecks = worktreePaths.map((p) => `sessionPath starts with "${p}"`).join(" or ");
 
-    try {
-      await execa("osascript", ["-e", script]);
-      closed++;
-    } catch {
-      // Session may not exist - continue
-    }
+  const script = `
+tell application "iTerm2"
+  set closedCount to 0
+  repeat with aWindow in windows
+    repeat with aTab in tabs of aWindow
+      repeat with aSession in sessions of aTab
+        try
+          tell aSession
+            set sessionPath to (variable named "session.path")
+            if ${pathChecks} then
+              tell aTab to close
+              set closedCount to closedCount + 1
+            end if
+          end tell
+        end try
+      end repeat
+    end repeat
+  end repeat
+  return closedCount
+end tell
+`;
+
+  try {
+    const result = await execa("osascript", ["-e", script]);
+    return parseInt(result.stdout.trim(), 10) || 0;
+  } catch {
+    return 0;
   }
-
-  return closed;
 }
