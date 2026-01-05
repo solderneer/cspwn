@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { homedir } from "os";
 import { join } from "path";
 import {
-  getClaudectlRoot,
+  getCspwnRoot,
   getReposDir,
   getRepoPath,
   getBareRepoPath,
@@ -16,40 +16,40 @@ import {
 
 describe("paths", () => {
   const home = homedir();
-  const root = join(home, ".claudectl");
+  const root = join(home, ".cspwn");
 
-  describe("getClaudectlRoot", () => {
-    it("returns ~/.claudectl", () => {
-      expect(getClaudectlRoot()).toBe(root);
+  describe("getCspwnRoot", () => {
+    it("returns ~/.cspwn", () => {
+      expect(getCspwnRoot()).toBe(root);
     });
   });
 
   describe("getReposDir", () => {
-    it("returns ~/.claudectl/repos", () => {
+    it("returns ~/.cspwn/repos", () => {
       expect(getReposDir()).toBe(join(root, "repos"));
     });
   });
 
   describe("getRepoPath", () => {
-    it("returns ~/.claudectl/repos/<hash>", () => {
+    it("returns ~/.cspwn/repos/<hash>", () => {
       expect(getRepoPath("abc123")).toBe(join(root, "repos", "abc123"));
     });
   });
 
   describe("getBareRepoPath", () => {
-    it("returns ~/.claudectl/repos/<hash>/bare", () => {
+    it("returns ~/.cspwn/repos/<hash>/bare", () => {
       expect(getBareRepoPath("abc123")).toBe(join(root, "repos", "abc123", "bare"));
     });
   });
 
   describe("getWorktreesDir", () => {
-    it("returns ~/.claudectl/repos/<hash>/worktrees", () => {
+    it("returns ~/.cspwn/repos/<hash>/worktrees", () => {
       expect(getWorktreesDir("abc123")).toBe(join(root, "repos", "abc123", "worktrees"));
     });
   });
 
   describe("getWorktreePath", () => {
-    it("returns ~/.claudectl/repos/<hash>/worktrees/<name>", () => {
+    it("returns ~/.cspwn/repos/<hash>/worktrees/<name>", () => {
       expect(getWorktreePath("abc123", "alice")).toBe(
         join(root, "repos", "abc123", "worktrees", "alice")
       );
@@ -57,25 +57,25 @@ describe("paths", () => {
   });
 
   describe("getQueuesDir", () => {
-    it("returns ~/.claudectl/queues", () => {
+    it("returns ~/.cspwn/queues", () => {
       expect(getQueuesDir()).toBe(join(root, "queues"));
     });
   });
 
   describe("getQueuePath", () => {
-    it("returns ~/.claudectl/queues/<hash>.json", () => {
+    it("returns ~/.cspwn/queues/<hash>.json", () => {
       expect(getQueuePath("abc123")).toBe(join(root, "queues", "abc123.json"));
     });
   });
 
   describe("getIpcDir", () => {
-    it("returns ~/.claudectl/ipc", () => {
+    it("returns ~/.cspwn/ipc", () => {
       expect(getIpcDir()).toBe(join(root, "ipc"));
     });
   });
 
   describe("getRepoIpcDir", () => {
-    it("returns ~/.claudectl/ipc/<hash>", () => {
+    it("returns ~/.cspwn/ipc/<hash>", () => {
       expect(getRepoIpcDir("abc123")).toBe(join(root, "ipc", "abc123"));
     });
   });

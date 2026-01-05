@@ -22,7 +22,7 @@ export async function sendNotification(options: NotificationOptions): Promise<vo
 
 export async function notifySpawnComplete(count: number): Promise<void> {
   await sendNotification({
-    title: "claudectl",
+    title: "cspwn",
     message: `Spawned ${count} Claude agent${count === 1 ? "" : "s"}`,
     sound: "Glass",
   });

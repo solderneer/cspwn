@@ -7,14 +7,15 @@ import { App } from "./app.js";
 const cli = meow(
   `
   Usage
-    $ claudectl <command> [options]
+    $ cspwn [count] [options]     Spawn Claude agents (default command)
+    $ cspwn <command> [options]
 
   Commands
-    spawn [count]    Spawn new Claude agents (default: 1)
-    list             List existing Claude agents
-    delete <agent>   Delete a specific agent
-    prune            Remove all agents for current repository
-    clean            Close tabs and remove agents for current repository
+    [count]          Spawn agents (default: 1)
+    ls               List existing agents
+    rm <agent>       Remove a specific agent
+    pr               Prune all agents for current repository
+    cl               Close tabs and remove agents for current repository
 
   Spawn Options
     -a, --agent      Reuse an existing agent (mutually exclusive with count)
@@ -24,31 +25,32 @@ const cli = meow(
     -n, --no-notify  Disable completion notifications
     --dry-run        Show what would be done without executing
 
-  List Options
+  List Options (ls)
     --all            List agents across all repositories
 
-  Delete Options
+  Remove Options (rm)
     -f, --force      Skip confirmation prompt
 
-  Prune Options
+  Prune Options (pr)
     --all            Prune agents across all repositories
     -f, --force      Skip confirmation prompt
 
-  Clean Options
+  Clean Options (cl)
     -t, --terminal   Force terminal type (kitty, iterm)
     -f, --force      Skip confirmation prompt
 
   Examples
-    $ claudectl spawn 5                     # Spawn 5 new agents
-    $ claudectl spawn --agent alice         # Reuse agent alice
-    $ claudectl spawn --task "fix auth bug" # New agents with fix/ branches
-    $ claudectl list                        # List agents for current repo
-    $ claudectl list --all                  # List all agents
-    $ claudectl delete alice                # Delete agent alice
-    $ claudectl prune                       # Remove all agents (current repo)
-    $ claudectl prune --all --force         # Remove all agents everywhere
-    $ claudectl clean                       # Close tabs and remove agents
-    $ claudectl clean --force               # Skip confirmation
+    $ cspwn                         # Spawn 1 agent
+    $ cspwn 3                       # Spawn 3 agents
+    $ cspwn -a alice                # Reuse agent alice
+    $ cspwn -T "fix auth bug"       # New agent with fix/ branch
+    $ cspwn ls                      # List agents for current repo
+    $ cspwn ls --all                # List all agents
+    $ cspwn rm alice                # Remove agent alice
+    $ cspwn pr                      # Prune all agents (current repo)
+    $ cspwn pr --all -f             # Prune all agents everywhere
+    $ cspwn cl                      # Close tabs and remove agents
+    $ cspwn cl -f                   # Skip confirmation
 `,
   {
     importMeta: import.meta,

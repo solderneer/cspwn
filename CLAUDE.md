@@ -17,16 +17,16 @@ npm run test:watch # Run tests in watch mode
 After building, test locally with:
 
 ```bash
-node bin/claudectl.js spawn --dry-run
-node bin/claudectl.js spawn 2 --task "fix auth bug" --dry-run
-node bin/claudectl.js --help
+node bin/cspwn.js --dry-run
+node bin/cspwn.js 2 --task "fix auth bug" --dry-run
+node bin/cspwn.js --help
 ```
 
 To install globally for testing:
 
 ```bash
 npm link
-claudectl spawn 3
+cspwn 3
 ```
 
 ## Conventions
@@ -56,7 +56,7 @@ This is a React-based terminal UI application using [Ink](https://github.com/vad
 ### Entry Flow
 
 ```
-bin/claudectl.js → src/cli.tsx (meow arg parsing) → src/app.tsx (routes to commands)
+bin/cspwn.js → src/cli.tsx (meow arg parsing) → src/app.tsx (routes to commands)
 ```
 
 ### Directory Structure
@@ -64,7 +64,7 @@ bin/claudectl.js → src/cli.tsx (meow arg parsing) → src/app.tsx (routes to c
 Agent worktrees are stored centrally:
 
 ```
-~/.claudectl/
+~/.cspwn/
 ├── repos/
 │   └── <repo-hash>/           # SHA256 of normalized remote URL (8 chars)
 │       ├── bare/              # Bare git repository (shared)
@@ -83,6 +83,7 @@ Agent worktrees are stored centrally:
 - `list.tsx` - Lists existing Claude agents
 - `delete.tsx` - Deletes a specific agent
 - `prune.tsx` - Removes all agents for a repository
+- `clean.tsx` - Closes terminal tabs and removes agents
 
 **Components** (`src/components/`)
 
@@ -91,7 +92,7 @@ Agent worktrees are stored centrally:
 
 **Lib** (`src/lib/`)
 
-- `paths.ts` - Centralized path management for ~/.claudectl structure
+- `paths.ts` - Centralized path management for ~/.cspwn structure
 - `repo-hash.ts` - Repository identification via URL hashing
 - `worktree.ts` - Git worktree operations (create, remove, list, reset)
 - `branch.ts` - Branch naming conventions (type/agent-description)
@@ -115,37 +116,43 @@ SpawnCommand uses React hooks with phases: `init` → `preparing` → `spawning`
 ## CLI Usage
 
 ```bash
-# Spawn 3 new agents (default)
-claudectl spawn
+# Spawn 1 agent (default)
+cspwn
+
+# Spawn 3 agents
+cspwn 3
 
 # Spawn with task description (auto-generates branch names)
-claudectl spawn 2 --task "fix auth bug"
-# Creates: fix/alice-fix-auth-bug, fix/betty-fix-auth-bug
+cspwn --task "fix auth bug"
+# Creates: fix/alice-fix-auth-bug
 
 # Reuse an existing agent
-claudectl spawn --agent alice
+cspwn --agent alice
 
 # Reuse agent with new task (creates new branch)
-claudectl spawn --agent alice --task "add tests"
+cspwn --agent alice --task "add tests"
 
 # Dry run to see what would happen
-claudectl spawn --dry-run
+cspwn --dry-run
 
 # Specify base branch
-claudectl spawn --branch develop
+cspwn --branch develop
 
 # List agents for current repo
-claudectl list
+cspwn ls
 
 # List all agents
-claudectl list --all
+cspwn ls --all
 
-# Delete a specific agent
-claudectl delete alice
+# Remove a specific agent
+cspwn rm alice
 
 # Remove all agents for current repo
-claudectl prune
+cspwn pr
 
 # Remove all agents everywhere
-claudectl prune --all --force
+cspwn pr --all -f
+
+# Close tabs and remove agents
+cspwn cl
 ```

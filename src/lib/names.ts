@@ -96,7 +96,7 @@ export async function pickNewAgentNames(count: number, repoHash: string): Promis
   if (available.length < count) {
     throw new Error(
       `Not enough available agent names. Requested ${count}, but only ${available.length} unused names available. ` +
-        `Use 'claudectl prune' to remove existing agents or 'claudectl delete <name>' to remove specific ones.`
+        `Use 'cspwn pr' to remove existing agents or 'cspwn rm <name>' to remove specific ones.`
     );
   }
 
