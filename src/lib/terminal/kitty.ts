@@ -14,6 +14,7 @@ export async function launchKittyTab(options: LaunchOptions): Promise<void> {
     "--hold",
     `--tab-title=Claude [${options.name}]`,
     `--cwd=${options.cwd}`,
+    `--env=CLAUDECTL_AGENT=${options.name}`,
     "zsh",
     "-l",
     "-c",
@@ -32,13 +33,14 @@ export async function isKittyAvailable(): Promise<boolean> {
 
 /**
  * Close Kitty tabs matching Claude agent names
+ * Uses env: matcher to match the CLAUDECTL_AGENT environment variable set at launch
  */
 export async function closeKittyTabs(agentNames: string[]): Promise<number> {
   let closed = 0;
 
   for (const name of agentNames) {
     try {
-      await execa("kitten", ["@", "close-tab", "--match", `title:^Claude \\[${name}\\]$`]);
+      await execa("kitten", ["@", "close-tab", "--match", `env:CLAUDECTL_AGENT=${name}`]);
       closed++;
     } catch {
       // Tab may not exist or already closed - continue
