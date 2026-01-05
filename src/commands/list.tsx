@@ -57,9 +57,11 @@ export function ListCommand({ all }: ListCommandProps) {
     const loadAgents = async () => {
       try {
         // Get current repo hash if in a git repo
+        let repoHash: string | null = null;
         if (await isGitRepo()) {
           const info = await getGitInfo();
-          setCurrentRepoHash(hashRemoteUrl(info.remote));
+          repoHash = hashRemoteUrl(info.remote);
+          setCurrentRepoHash(repoHash);
         }
 
         const reposDir = getReposDir();
@@ -76,9 +78,9 @@ export function ListCommand({ all }: ListCommandProps) {
 
         // If not --all, filter to current repo only
         let hashesToCheck = repoHashes;
-        if (!all && currentRepoHash) {
-          hashesToCheck = repoHashes.filter((h) => h === currentRepoHash);
-        } else if (!all && !currentRepoHash) {
+        if (!all && repoHash) {
+          hashesToCheck = repoHashes.filter((h) => h === repoHash);
+        } else if (!all && !repoHash) {
           // Not in a git repo and not using --all
           setError("Not in a git repository. Use --all to list all agents.");
           setLoading(false);
