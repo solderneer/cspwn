@@ -7,14 +7,14 @@ export interface LaunchOptions {
 }
 
 export async function launchITermTab(options: LaunchOptions): Promise<void> {
-  // Set tab title using escape sequence before running command
-  // Also export CLAUDECTL_AGENT env var for identification
+  // Use escape sequence to set tab title, then run command
+  // \e]1;title\a sets the tab/icon title in iTerm2
   const script = `
     tell application "iTerm2"
       tell current window
         create tab with default profile
         tell current session
-          write text "export CLAUDECTL_AGENT='${options.name}'; cd '${options.cwd}' && ${options.command}"
+          write text "printf \\"\\\\e]1;Claude [${options.name}]\\\\a\\"; export CLAUDECTL_AGENT='${options.name}'; cd '${options.cwd}' && ${options.command}"
         end tell
       end tell
     end tell
