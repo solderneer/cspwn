@@ -1,6 +1,6 @@
-# claudectl
+# cspwn
 
-Multi-agent Claude orchestration CLI. Spawn multiple Claude Code instances across your codebase in seconds.
+Claude worktree spawner. Spawn multiple Claude Code instances across your codebase in seconds.
 
 <p align="center">
   <img src="https://img.shields.io/badge/version-1.0.0-blue" alt="Version">
@@ -10,23 +10,23 @@ Multi-agent Claude orchestration CLI. Spawn multiple Claude Code instances acros
 
 ## Why?
 
-When working on complex tasks, multiple Claude agents can divide and conquer - one handles tests, another refactors, a third updates docs. `claudectl` makes spawning these agents trivial.
+When working on complex tasks, multiple Claude agents can divide and conquer - one handles tests, another refactors, a third updates docs. `cspwn` makes spawning these agents trivial.
 
 ## Features
 
 - **Git worktrees** - Agents share a single `.git` directory, saving disk space and spawn time
 - **Auto branch naming** - Agents get branches like `feat/alice-work` or `fix/betty-fix-auth`
 - **Memorable agent names** - Names like `betty`, `felix`, `grace` instead of numbers
-- **Docker-style management** - `list`, `delete`, and `prune` commands to manage agents
+- **Docker-style management** - `ls`, `rm`, and `pr` commands to manage agents
 - **Terminal support** - Works with Kitty and iTerm2
-- **Central storage** - All worktrees live in `~/.claudectl/`, keeping your project clean
+- **Central storage** - All worktrees live in `~/.cspwn/`, keeping your project clean
 
 ## Installation
 
 ```bash
 # Clone and install
-git clone https://github.com/solderneer/claudectl.git
-cd claudectl
+git clone https://github.com/solderneer/cspwn.git
+cd cspwn
 npm install
 npm run build
 npm link
@@ -37,60 +37,70 @@ npm link
 ### Spawn Claude agents
 
 ```bash
-# Spawn 3 new agents (default)
-claudectl spawn
+# Spawn 1 agent (default)
+cspwn
 
-# Spawn 5 new agents
-claudectl spawn 5
+# Spawn 3 agents
+cspwn 3
 
 # Spawn with task description (auto-generates branch names)
-claudectl spawn --task "fix auth bug"
-# Creates: fix/alice-fix-auth-bug, fix/betty-fix-auth-bug, ...
+cspwn --task "fix auth bug"
+# Creates: fix/alice-fix-auth-bug
 
 # Reuse an existing agent
-claudectl spawn --agent alice
+cspwn --agent alice
 
 # Reuse agent with a new task (creates new branch)
-claudectl spawn --agent alice --task "add unit tests"
+cspwn --agent alice --task "add unit tests"
 
 # Use a specific base branch
-claudectl spawn --branch develop
+cspwn --branch develop
 
 # Preview without executing
-claudectl spawn --dry-run
+cspwn --dry-run
 ```
 
 ### List agents
 
 ```bash
 # List agents for current repository
-claudectl list
+cspwn ls
 
 # List all agents across all repositories
-claudectl list --all
+cspwn ls --all
 ```
 
-### Delete agents
+### Remove agents
 
 ```bash
-# Delete a specific agent (with confirmation)
-claudectl delete alice
+# Remove a specific agent (with confirmation)
+cspwn rm alice
 
-# Force delete without confirmation
-claudectl delete alice --force
+# Force remove without confirmation
+cspwn rm alice -f
 ```
 
 ### Prune all agents
 
 ```bash
 # Remove all agents for current repository
-claudectl prune
+cspwn pr
 
 # Remove all agents everywhere
-claudectl prune --all
+cspwn pr --all
 
 # Skip confirmation
-claudectl prune --force
+cspwn pr -f
+```
+
+### Close and clean up
+
+```bash
+# Close terminal tabs and remove all agents for current repository
+cspwn cl
+
+# Skip confirmation
+cspwn cl -f
 ```
 
 ## Example Output
@@ -98,8 +108,8 @@ claudectl prune --force
 ### Spawning new agents
 
 ```
-claudectl
-Multi-agent Claude orchestration
+cspwn
+Claude worktree spawner
 
 v1.0.0
 
@@ -117,7 +127,7 @@ Spawning 3 Claude agents in Kitty
 ```
 Found 3 agents
 
-solderneer/claudectl (a1b2c3d4)
+solderneer/cspwn (a1b2c3d4)
   alice         feat/alice-work          2h ago
   betty         fix/betty-fix-auth       1d ago
   felix         feat/felix-add-tests     3d ago
@@ -125,7 +135,7 @@ solderneer/claudectl (a1b2c3d4)
 
 ## Options
 
-### Spawn
+### Spawn (default command)
 
 ```
 -a, --agent <name>      Reuse an existing agent
@@ -136,21 +146,21 @@ solderneer/claudectl (a1b2c3d4)
 --dry-run               Preview without executing
 ```
 
-### List / Prune
+### List (ls) / Prune (pr)
 
 ```
 --all                   Apply to all repositories
--f, --force             Skip confirmation (delete/prune only)
+-f, --force             Skip confirmation (rm/pr/cl only)
 ```
 
 ## How it works
 
 1. Detects your git repository and remote URL
-2. Creates a bare repo at `~/.claudectl/repos/<hash>/bare/`
+2. Creates a bare repo at `~/.cspwn/repos/<hash>/bare/`
 3. For each agent:
    - Picks an unused agent name from the pool
    - Generates a branch name based on agent name and task
-   - Creates a fresh worktree at `~/.claudectl/repos/<hash>/worktrees/<name>/`
+   - Creates a fresh worktree at `~/.cspwn/repos/<hash>/worktrees/<name>/`
 4. Opens each in a new terminal tab with Claude Code running
 
 When reusing an existing agent (`--agent`):
@@ -162,7 +172,7 @@ When reusing an existing agent (`--agent`):
 ### Directory Structure
 
 ```
-~/.claudectl/
+~/.cspwn/
 └── repos/
     └── a1b2c3d4/              # Repo hash (from remote URL)
         ├── bare/              # Shared bare git repo

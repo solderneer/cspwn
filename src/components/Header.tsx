@@ -7,9 +7,9 @@ export function Header() {
   return (
     <Box flexDirection="column" marginBottom={1}>
       <Text color="#D97757" bold>
-        claudectl
+        cspwn
       </Text>
-      <Text dimColor>Multi-agent Claude orchestration</Text>
+      <Text dimColor>Claude worktree spawner</Text>
       <Box marginTop={1}>
         <Text color="blue" dimColor>
           v{VERSION}

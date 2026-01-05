@@ -1,10 +1,10 @@
 {
-  "name": "claudectl",
+  "name": "cspwn",
   "version": "1.0.0",
-  "description": "Multi-agent Claude orchestration CLI",
+  "description": "Claude worktree spawner CLI",
   "type": "module",
   "bin": {
-    "claudectl": "./bin/claudectl.js"
+    "cspwn": "./bin/cspwn.js"
   },
   "main": "./dist/cli.js",
   "files": [
@@ -14,7 +14,7 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "start": "node bin/claudectl.js",
+    "start": "node bin/cspwn.js",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix && prettier --write src/",

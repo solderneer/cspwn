@@ -157,7 +157,7 @@ export function ListCommand({ all }: ListCommandProps) {
     return (
       <Box flexDirection="column">
         <Text dimColor>No agents found.</Text>
-        <Text dimColor>Use 'claudectl spawn' to create new agents.</Text>
+        <Text dimColor>Use 'cspwn' to create new agents.</Text>
       </Box>
     );
   }

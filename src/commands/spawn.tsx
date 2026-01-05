@@ -14,7 +14,7 @@ import { getGitInfo, isGitRepo, GitError } from "../lib/git.js";
 import { notifySpawnComplete } from "../lib/notifications.js";
 import { pickNewAgentNames, isValidAgentName, isExistingAgent } from "../lib/names.js";
 import { hashRemoteUrl } from "../lib/repo-hash.js";
-import { ensureClaudectlDirs, getWorktreePath, getBareRepoPath } from "../lib/paths.js";
+import { ensureCspwnDirs, getWorktreePath, getBareRepoPath } from "../lib/paths.js";
 import {
   ensureBareRepo,
   createWorktree,
@@ -108,8 +108,8 @@ export function SpawnCommand({
         }
         setTerminalType(detected as TerminalType);
 
-        // Ensure claudectl directories exist
-        ensureClaudectlDirs();
+        // Ensure cspwn directories exist
+        ensureCspwnDirs();
 
         // Determine agent names
         let names: string[];
@@ -118,14 +118,12 @@ export function SpawnCommand({
         if (agent) {
           // Reuse specific agent
           if (!isValidAgentName(agent)) {
-            setError(`Invalid agent name: ${agent}. Use 'claudectl list' to see available agents.`);
+            setError(`Invalid agent name: ${agent}. Use 'cspwn ls' to see available agents.`);
             return;
           }
           const exists = await isExistingAgent(agent, hash);
           if (!exists) {
-            setError(
-              `Agent '${agent}' does not exist. Use 'claudectl list' to see existing agents.`
-            );
+            setError(`Agent '${agent}' does not exist. Use 'cspwn ls' to see existing agents.`);
             return;
           }
           names = [agent];
